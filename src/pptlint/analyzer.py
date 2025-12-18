@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import List
 
 from .rules.base import Rule, Issue
 from .rules.list import ListRule
@@ -19,4 +19,16 @@ class PresentationAnalyzer:
         ]
 
     def analyze(self, pres) -> List[Issue]:
-        pass
+        issues: List[Issue] = []
+
+        for rule in self.rules:
+            issues.append(rule.run(pres))
+
+        issues.sort(
+            key=lambda x: (
+                x.get("category", ""),
+                x.get("slide", 10**9),
+                x.get("message", ""),
+            )
+        )
+        return issues
