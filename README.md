@@ -140,11 +140,11 @@ MVP‑набор проверок:
   - отвечает за архитектуру проекта и структуру кода;
   - ведёт основной репозиторий GitLab, настраивает CI;
   - отвечает за модуль ReportGenerator (отчёт в консоль/Markdown);
-  - реализует FontRule и TitleStyleRule;
+  - реализует базовый класс Rule, правила FontRule и TitleStyleRule;
   - участвует в написании документации.
 
 - Лиза (Backend + Документация)
-  - реализует PresentationAnalyzer, базовый класс Rule;
+  - реализует PresentationAnalyzer, функцию load_presentation;
   - реализует правила:
     - ListRule — списки из одного пункта;
     - SlideNumberRule — нумерация слайдов;
