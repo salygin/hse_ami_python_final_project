@@ -1,3 +1,5 @@
+from typing import Any, List
+
 from .base import Rule, Issue
 
 
