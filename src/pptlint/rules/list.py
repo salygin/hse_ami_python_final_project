@@ -53,8 +53,51 @@ class ListRule(Rule):
 
     @staticmethod
     def _count_items(self, text_frame) -> int:
-        pass
+        cnt = 0
+        for p in getattr(text_frame, "paragraphs", []):
+            text = (getattr(p, "text", "")).strip()
+            if not text:
+                continue
+            if self._is_list_paragraph(p):
+                cnt += 1
+        return cnt
 
     @staticmethod
     def _has_mixed_bullets(self, text_frame) -> bool:
-        pass
+        types: List[bool] = []
+        for p in getattr(text_frame, "paragraphs", []):
+            text = (getattr(p, "text", "")).strip()
+            if not text:
+                continue
+            types.append(self._paragraph_type(p))
+
+        if len(types) < 2:
+            return False
+        if all(types) or not any(types):
+            return False
+
+        transitions = sum(1 for i in range(1, len(types)) if types[i] != types[i - 1])
+        return transitions >= 2
+    @staticmethod
+    def _paragraph_type(paragraph) -> str:
+        p = getattr(paragraph, "_p", None)
+        if p is None:
+            return "None"
+
+        pPr = getattr(p, "pPr", None)
+        if pPr is None:
+            return "None"
+
+        if pPr.find(qn("a:buNone")) is not None:
+            return "None"
+
+        if pPr.find(qn("a:buAutoNum")) is not None:
+            return "AutoNum"
+        if pPr.find(qn("a:buChar")) is not None:
+            return "Char"
+        if pPr.find(qn("a:buBlip")) is not None:
+            return "Blip"
+        if pPr.find(qn("a:buFont")) is not None:
+            return "Font"
+
+        return False
