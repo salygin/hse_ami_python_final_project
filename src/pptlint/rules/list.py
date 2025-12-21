@@ -51,7 +51,6 @@ class ListRule(Rule):
 
         return issues
 
-    @staticmethod
     def _count_items(self, text_frame) -> int:
         cnt = 0
         for p in getattr(text_frame, "paragraphs", []):
@@ -62,7 +61,6 @@ class ListRule(Rule):
                 cnt += 1
         return cnt
 
-    @staticmethod
     def _has_mixed_bullets(self, text_frame) -> bool:
         types: List[bool] = []
         for p in getattr(text_frame, "paragraphs", []):
@@ -78,6 +76,7 @@ class ListRule(Rule):
 
         transitions = sum(1 for i in range(1, len(types)) if types[i] != types[i - 1])
         return transitions >= 2
+
     @staticmethod
     def _paragraph_type(paragraph) -> str:
         p = getattr(paragraph, "_p", None)
