@@ -1,4 +1,5 @@
 from typing import Any, Optional, List, Tuple
+import re
 
 from .base import Rule, Issue
 from ..utils import iter_text_shapes
@@ -67,4 +68,52 @@ class SlideNumberRule(Rule):
         return issues
     
     def _extract_number(self, shape: Any, total_slides: Optional[int] = None) -> Optional[int]:
-        pass
+        if not getattr(shape, "has_text_frame", False):
+            return None
+
+        text_frame = getattr(shape, "text_frame", None)
+        if text_frame is None:
+            return None
+
+        raw = (getattr(text_frame, "text", "")).strip()
+        if not raw:
+            return None
+
+        # слишком длинные или многострочные тексты почти наверняка не номер слайда
+        if "\n" in raw or len(raw) > 20:
+            return None
+
+        s = raw.strip()
+        if not s:
+            return False
+        
+        # убираем типичные обертки номера слайда
+        s = re.sub(r"^\s*(?:slide\s*)?", "", s, flags=re.IGNORECASE)
+        s = re.sub(r"^\s*(?:слайд\s*)?", "", s, flags=re.IGNORECASE)
+        s = re.sub(r"^\s*[#№]+\s*", "", s)
+        s = re.sub(r"^[\-\–\—\(\[\{]\s*", "", s)
+        s = re.sub(r"\s*[\-\–\—\)\]\}]\s*$", "", s)
+        s = s.strip()
+
+        # "3/10"
+        m = re.fullmatch(r"(\d+)\s*/\s*(\d+)", s)
+        if m:
+            a, b = int(m.group(1)), int(m.group(2))
+            if a <= 0:
+                return None
+            if b <= 0 or b < total_slides - 2 or b > total_slides:
+                return None
+            if a > b:
+                return None
+            return a
+
+        # "3"
+        if re.fullmatch(r"\d+", s):
+            n = int(s)
+            if n <= 0:
+                return None
+            if n > total_slides:
+                return None
+            return n
+
+        return None
