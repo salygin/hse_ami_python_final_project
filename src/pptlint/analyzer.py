@@ -1,5 +1,3 @@
-from typing import List
-
 from .rules.base import Rule, Issue
 from .rules.list import ListRule
 from .rules.font import FontRule
@@ -10,7 +8,7 @@ from .rules.title_style import TitleStyleRule
 
 class PresentationAnalyzer:
     def __init__(self) -> None:
-        self.rules: List[Rule] = [
+        self.rules: list[Rule] = [
             ListRule(),
             FontRule(),
             SlideNumberRule(),
@@ -18,8 +16,8 @@ class PresentationAnalyzer:
             TitleStyleRule(),
         ]
 
-    def analyze(self, pres) -> List[Issue]:
-        issues: List[Issue] = []
+    def analyze(self, pres) -> list[Issue]:
+        issues: list[Issue] = []
 
         for rule in self.rules:
             result = rule.run(pres)

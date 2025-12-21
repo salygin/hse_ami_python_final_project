@@ -1,5 +1,3 @@
-from typing import List, Optional
-
 from .base import Rule, Issue
 from ..utils import iter_text_shapes
 
@@ -10,8 +8,8 @@ class TextDensityRule(Rule):
         self.max_lines = max_lines
         self.min_font_pt = min_font_pt
 
-    def run(self, pres) -> List[Issue]:
-        issues: List[Issue] = []
+    def run(self, pres) -> list[Issue]:
+        issues: list[Issue] = []
 
         for slide_idx, slide in enumerate(pres.slides, start=1):
             for shape in iter_text_shapes(slide):
@@ -46,8 +44,8 @@ class TextDensityRule(Rule):
             lines += 1 + text.count("\n")
         return lines
 
-    def _min_font_size(self, text_frame) -> Optional[int]:
-        min_pt: Optional[int] = None
+    def _min_font_size(self, text_frame) -> int | None:
+        min_pt: int | None = None
         for p in getattr(text_frame, "paragraphs", []):
             p_size = self._size_to_pt(getattr(getattr(p, "font", None), "size", None))
             runs = getattr(p, "runs", []) or []
@@ -64,7 +62,7 @@ class TextDensityRule(Rule):
         return min_pt
 
     @staticmethod
-    def _size_to_pt(size) -> Optional[int]:
+    def _size_to_pt(size) -> int | None:
         if size is None:
             return None
         try:

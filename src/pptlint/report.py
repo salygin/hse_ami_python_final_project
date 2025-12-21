@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from collections.abc import Iterable, Sequence
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 import sys
 from .rules.base import Issue
 
 
-_CATEGORY_ORDER: List[str] = [
+_CATEGORY_ORDER: list[str] = [
     "Списки",
     "Шрифты",
     "Нумерация слайдов",
@@ -16,7 +15,7 @@ _CATEGORY_ORDER: List[str] = [
 ]
 
 
-def print_report(issues: List[Issue]) -> None:
+def print_report(issues: list[Issue]) -> None:
 
     out = sys.stdout
 
@@ -38,7 +37,7 @@ def print_report(issues: List[Issue]) -> None:
     out.write("\n")
 
 
-def write_markdown_report(issues: List[Issue], path: str | Path) -> None:
+def write_markdown_report(issues: list[Issue], path: str | Path) -> None:
     md = _render_markdown(issues)
 
     p = Path(path)
@@ -47,8 +46,8 @@ def write_markdown_report(issues: List[Issue], path: str | Path) -> None:
     p.write_text(md, encoding="utf-8")
 
 
-def _group_and_sort(issues: Sequence[Issue]) -> Dict[str, List[Issue]]:
-    grouped: Dict[str, List[Issue]] = {}
+def _group_and_sort(issues: Sequence[Issue]) -> dict[str, list[Issue]]:
+    grouped: dict[str, list[Issue]] = {}
     for it in issues:
         cat = it.category
         grouped.setdefault(cat, []).append(it)
@@ -58,7 +57,7 @@ def _group_and_sort(issues: Sequence[Issue]) -> Dict[str, List[Issue]]:
     return grouped
 
 
-def _sorted_categories(categories: Iterable[str]) -> List[str]:
+def _sorted_categories(categories: Iterable[str]) -> list[str]:
     cats = list(categories)
     order_index = {c: i for i, c in enumerate(_CATEGORY_ORDER)}
     return sorted(
@@ -67,7 +66,7 @@ def _sorted_categories(categories: Iterable[str]) -> List[str]:
     )
 
 
-def _slide_sort_key(slide: Optional[int]) -> Tuple[int, int]:
+def _slide_sort_key(slide: int | None) -> tuple[int, int]:
     if slide is None:
         return (1, 0)
     return (0, slide)
@@ -85,7 +84,7 @@ def _render_markdown(issues: Sequence[Issue]) -> str:
 
     grouped = _group_and_sort(issues)
 
-    lines: List[str] = []
+    lines: list[str] = []
     lines.append("# Отчёт PowerPoint Lint\n")
 
     for category in _sorted_categories(grouped.keys()):

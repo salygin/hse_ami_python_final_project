@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any
 
 from pptx.enum.shapes import PP_PLACEHOLDER
 
@@ -161,7 +160,7 @@ class TitleStyleRule(Rule):
 
         return TitleSignature(font_name=font_name, font_size_pt=font_size_pt, bold=bold)
 
-    def _iter_runs(self, text_frame) -> Iterable[Any]:
+    def _iter_runs(self, text_frame) -> Iterable[object]:
         for p in getattr(text_frame, "paragraphs", []):
             for r in getattr(p, "runs", []):
                 yield r

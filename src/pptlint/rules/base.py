@@ -1,12 +1,11 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, List, Optional
 
 @dataclass(frozen=True)
 class Issue:
     category: str
     message: str
-    slide: Optional[int] = None
+    slide: int | None = None
     rule: str = ""
 
 
@@ -18,10 +17,10 @@ class Rule(ABC):
         pass
 
     @abstractmethod
-    def run(self, pres: Any) -> List[Issue]:
+    def run(self, pres: object) -> list[Issue]:
         raise NotImplementedError
 
-    def _issue(self, message: str, slide: Optional[int] = None) -> Issue:
+    def _issue(self, message: str, slide: int | None = None) -> Issue:
         return Issue(
             category=self.category,
             message=message,

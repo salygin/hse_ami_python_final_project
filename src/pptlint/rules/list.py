@@ -1,5 +1,3 @@
-from typing import List
-
 from pptx.oxml.ns import qn
 
 from .base import Rule, Issue
@@ -9,8 +7,8 @@ from ..utils import iter_text_shapes
 class ListRule(Rule):
     category = "Списки"
 
-    def run(self, pres) -> List[Issue]:
-        issues: List[Issue] = []
+    def run(self, pres) -> list[Issue]:
+        issues: list[Issue] = []
 
         for slide_idx, slide in enumerate(getattr(pres, "slides", []), start=1):
             list_frames = 0
@@ -62,7 +60,7 @@ class ListRule(Rule):
         return cnt
 
     def _has_mixed_bullets(self, text_frame) -> bool:
-        types: List[bool] = []
+        types: list[bool] = []
         for p in getattr(text_frame, "paragraphs", []):
             text = (getattr(p, "text", "")).strip()
             if not text:
