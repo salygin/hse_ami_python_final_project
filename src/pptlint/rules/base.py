@@ -26,5 +26,5 @@ class Rule(ABC):
             category=self.category,
             message=message,
             slide=slide,
-            rule=self.self.__class__.__name__,
+            rule=self.__class__.__name__,
         )

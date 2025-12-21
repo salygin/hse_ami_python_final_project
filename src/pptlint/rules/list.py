@@ -7,7 +7,7 @@ from ..utils import iter_text_shapes
 
 
 class ListRule(Rule):
-    CATEGORY = "Списки"
+    category = "Списки"
 
     def run(self, pres) -> List[Issue]:
         issues: List[Issue] = []
@@ -36,7 +36,7 @@ class ListRule(Rule):
                     msg = f"Слайд {slide_idx}: список из 1 пункта."
                 else:
                     msg = f"Слайд {slide_idx}: {one_item_frames} списка из 1 пункта."
-                issues.append(self._issue(slide_idx, msg))
+                issues.append(self._issue(msg, slide=slide_idx))
 
             if mixed_frames > 0:
                 if mixed_frames == 1:
@@ -47,7 +47,7 @@ class ListRule(Rule):
                     msg = (
                         f"Слайд {slide_idx}: {mixed_frames} списка с перемешанными маркерами."
                     )
-                issues.append(self._issue(slide_idx, msg))
+                issues.append(self._issue(msg, slide=slide_idx))
 
         return issues
 
@@ -67,7 +67,7 @@ class ListRule(Rule):
             text = (getattr(p, "text", "")).strip()
             if not text:
                 continue
-            types.append(self._paragraph_type(p))
+            types.append(self._is_list_paragraph(p))
 
         if len(types) < 2:
             return False
@@ -78,25 +78,25 @@ class ListRule(Rule):
         return transitions >= 2
 
     @staticmethod
-    def _paragraph_type(paragraph) -> str:
+    def _is_list_paragraph(paragraph) -> bool:
         p = getattr(paragraph, "_p", None)
         if p is None:
-            return "None"
+            return False
 
         pPr = getattr(p, "pPr", None)
         if pPr is None:
-            return "None"
+            return False
 
         if pPr.find(qn("a:buNone")) is not None:
-            return "None"
+            return False
 
         if pPr.find(qn("a:buAutoNum")) is not None:
-            return "AutoNum"
+            return True
         if pPr.find(qn("a:buChar")) is not None:
-            return "Char"
+            return True
         if pPr.find(qn("a:buBlip")) is not None:
-            return "Blip"
+            return True
         if pPr.find(qn("a:buFont")) is not None:
-            return "Font"
+            return True
 
         return False

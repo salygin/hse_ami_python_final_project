@@ -32,7 +32,7 @@ class SlideNumberRule(Rule):
 
         for idx in range(1, total_slides + 1):
             if slide_num.get(idx) is None:
-                issues.append(self._issue(idx, "Нет номера слайда."))
+                issues.append(self._issue("Нет номера слайда.", slide=idx))
 
         first_numbered = next(((i, n) for i, n in slide_num.items() if n is not None), None)
         if first_numbered is not None:
@@ -40,8 +40,8 @@ class SlideNumberRule(Rule):
             if n0 != 1:
                 issues.append(
                     self._issue(
-                        i0,
                         f"Нумерация начинается не с 1 (первый найденный номер: {n0}).",
+                        slide=i0,
                     )
                 )
 
@@ -53,7 +53,7 @@ class SlideNumberRule(Rule):
                 continue
             if prev_n is not None and n != prev_n + 1:
                 gap_slides.add(i)
-                issues.append(self._issue(i, f"Разрыв нумерации: после {prev_n} идёт {n}."))
+                issues.append(self._issue(f"Разрыв нумерации: после {prev_n} идёт {n}.", slide=i))
             prev_n = n
 
         for i in range(1, total_slides + 1):
@@ -62,7 +62,10 @@ class SlideNumberRule(Rule):
                 continue
             if n != i:
                 issues.append(
-                    self._issue(i, f"Номер на слайде не соответствует позиции: найден {n}, ожидался {i}.")
+                    self._issue(
+                        f"Номер на слайде не соответствует позиции: найден {n}, ожидался {i}.",
+                        slide=i,
+                    )
                 )
 
         return issues
