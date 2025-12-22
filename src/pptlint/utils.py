@@ -1,13 +1,13 @@
-from typing import Iterator, Any
+from collections.abc import Iterator
 
 from pptx.enum.shapes import MSO_SHAPE_TYPE
 
 
-def iter_text_shapes(slide: Any) -> Iterator[Any]:
+def iter_text_shapes(slide: object) -> Iterator[object]:
     yield from _walk_shapes(getattr(slide, "shapes", []))
 
 
-def _walk_shapes(shapes: Any) -> Iterator[Any]:
+def _walk_shapes(shapes: object) -> Iterator[object]:
     for shape in shapes:
         if _is_group_shape(shape):
             inner = getattr(shape, "shapes", None)
@@ -19,7 +19,7 @@ def _walk_shapes(shapes: Any) -> Iterator[Any]:
             yield shape
 
 
-def _is_group_shape(shape: Any) -> bool:
+def _is_group_shape(shape: object) -> bool:
     st = getattr(shape, "shape_type", None)
     if st == MSO_SHAPE_TYPE.GROUP:
         return True

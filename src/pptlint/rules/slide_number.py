@@ -1,4 +1,3 @@
-from typing import Any, Optional, List, Tuple
 import re
 
 from .base import Rule, Issue
@@ -8,13 +7,13 @@ from ..utils import iter_text_shapes
 class SlideNumberRule(Rule):
     category = "Нумерация слайдов"
 
-    def run(self, pres: Any) -> List[Issue]:
+    def run(self, pres: object) -> list[Issue]:
         total_slides = len(getattr(pres, "slides", []))
-        issues: List[Issue] = []
-        slide_num: dict[int, Optional[int]] = {}
+        issues: list[Issue] = []
+        slide_num: dict[int, int | None] = {}
 
         for idx, slide in enumerate(pres.slides, start=1):
-            candidates: List[Tuple[int, int]] = []
+            candidates: list[tuple[int, int]] = []
             for shape in iter_text_shapes(slide):
                 num = self._extract_number(shape, total_slides=total_slides)
                 if num is None:
@@ -32,7 +31,7 @@ class SlideNumberRule(Rule):
 
         for idx in range(1, total_slides + 1):
             if slide_num.get(idx) is None:
-                issues.append(self._issue(idx, "Нет номера слайда."))
+                issues.append(self._issue("Нет номера слайда.", slide=idx))
 
         first_numbered = next(((i, n) for i, n in slide_num.items() if n is not None), None)
         if first_numbered is not None:
@@ -40,20 +39,20 @@ class SlideNumberRule(Rule):
             if n0 != 1:
                 issues.append(
                     self._issue(
-                        i0,
                         f"Нумерация начинается не с 1 (первый найденный номер: {n0}).",
+                        slide=i0,
                     )
                 )
 
         gap_slides: set[int] = set()
-        prev_n: Optional[int] = None
+        prev_n: int | None = None
         for i in range(1, total_slides + 1):
             n = slide_num.get(i)
             if n is None:
                 continue
             if prev_n is not None and n != prev_n + 1:
                 gap_slides.add(i)
-                issues.append(self._issue(i, f"Разрыв нумерации: после {prev_n} идёт {n}."))
+                issues.append(self._issue(f"Разрыв нумерации: после {prev_n} идёт {n}.", slide=i))
             prev_n = n
 
         for i in range(1, total_slides + 1):
@@ -62,12 +61,15 @@ class SlideNumberRule(Rule):
                 continue
             if n != i:
                 issues.append(
-                    self._issue(i, f"Номер на слайде не соответствует позиции: найден {n}, ожидался {i}.")
+                    self._issue(
+                        f"Номер на слайде не соответствует позиции: найден {n}, ожидался {i}.",
+                        slide=i,
+                    )
                 )
 
         return issues
     
-    def _extract_number(self, shape: Any, total_slides: Optional[int] = None) -> Optional[int]:
+    def _extract_number(self, shape: object, total_slides: int | None = None) -> int | None:
         if not getattr(shape, "has_text_frame", False):
             return None
 
