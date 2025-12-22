@@ -38,7 +38,33 @@ class TextDensityRule(Rule):
         return issues
 
     def _count_lines(self, text_frame) -> int:
-        pass
+        lines = 0
+        for p in text_frame.paragraphs:
+            txt = (p.text or "").strip()
+            if not txt:
+                continue
+            lines += 1 + txt.count("\n")
+        return lines
 
     def _min_font_size(self, text_frame) -> Optional[int]:
-        pass
+        min_pt: Optional[int] = None
+        for p in text_frame.paragraphs:
+            p_size = self._size_to_pt(getattr(p.font, "size", None))
+            if p_size:
+                min_pt = p_size if min_pt is None else min(min_pt, p_size)
+            if getattr(p, "runs", None):
+                for r in p.runs:
+                    r_size = self._size_to_pt(getattr(r.font, "size", None))
+                    if r_size:
+                        min_pt = r_size if min_pt is None else min(min_pt, r_size)
+        return min_pt
+    
+    @staticmethod
+    def _size_to_pt(size) -> Optional[int]:
+        if size is None:
+            return None
+        try:
+            pt_val = float(size.pt)
+            return int(round(pt_val))
+        except Exception:
+            return None
