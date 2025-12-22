@@ -37,28 +37,24 @@ class TextDensityRule(Rule):
 
     def _count_lines(self, text_frame) -> int:
         lines = 0
-        for p in getattr(text_frame, "paragraphs", []):
-            text = (getattr(p, "text", "") or "").strip()
-            if not text:
+        for p in text_frame.paragraphs:
+            txt = (p.text or "").strip()
+            if not txt:
                 continue
-            lines += 1 + text.count("\n")
+            lines += 1 + txt.count("\n")
         return lines
 
     def _min_font_size(self, text_frame) -> int | None:
         min_pt: int | None = None
-        for p in getattr(text_frame, "paragraphs", []):
-            p_size = self._size_to_pt(getattr(getattr(p, "font", None), "size", None))
-            runs = getattr(p, "runs", []) or []
-            if runs:
-                for r in runs:
-                    r_size = self._size_to_pt(getattr(getattr(r, "font", None), "size", None))
-                    size = r_size if r_size is not None else p_size
-                    if size is None:
-                        continue
-                    min_pt = size if min_pt is None else min(min_pt, size)
-            else:
-                if p_size is not None:
-                    min_pt = p_size if min_pt is None else min(min_pt, p_size)
+        for p in text_frame.paragraphs:
+            p_size = self._size_to_pt(getattr(p.font, "size", None))
+            if p_size:
+                min_pt = p_size if min_pt is None else min(min_pt, p_size)
+            if getattr(p, "runs", None):
+                for r in p.runs:
+                    r_size = self._size_to_pt(getattr(r.font, "size", None))
+                    if r_size:
+                        min_pt = r_size if min_pt is None else min(min_pt, r_size)
         return min_pt
 
     @staticmethod
