@@ -103,7 +103,9 @@ class SlideNumberRule(Rule):
             a, b = int(m.group(1)), int(m.group(2))
             if a <= 0:
                 return None
-            if b <= 0 or b < total_slides - 2 or b > total_slides:
+            if total_slides is not None and (b <= 0 or b < total_slides - 2 or b > total_slides):
+                return None
+            if b > 1000:
                 return None
             if a > b:
                 return None
@@ -115,6 +117,8 @@ class SlideNumberRule(Rule):
             if n <= 0:
                 return None
             if n > total_slides:
+                return None
+            if n > 1000:
                 return None
             return n
 
