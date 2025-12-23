@@ -60,41 +60,39 @@ class ListRule(Rule):
         return cnt
 
     def _has_mixed_bullets(self, text_frame) -> bool:
-        types: list[bool] = []
+        types: list[str] = []
         for p in getattr(text_frame, "paragraphs", []):
             text = (getattr(p, "text", "")).strip()
             if not text:
                 continue
-            types.append(self._is_list_paragraph(p))
+            types.append(self._paragraph_type(p))
 
         if len(types) < 2:
-            return False
-        if all(types) or not any(types):
             return False
 
         transitions = sum(1 for i in range(1, len(types)) if types[i] != types[i - 1])
         return transitions >= 2
 
     @staticmethod
-    def _is_list_paragraph(paragraph) -> bool:
+    def _paragraph_type(paragraph) -> str:
         p = getattr(paragraph, "_p", None)
         if p is None:
-            return False
+            return "none"
 
         pPr = getattr(p, "pPr", None)
         if pPr is None:
-            return False
+            return "none"
 
         if pPr.find(qn("a:buNone")) is not None:
-            return False
+            return "none"
 
         if pPr.find(qn("a:buAutoNum")) is not None:
-            return True
+            return "auto"
         if pPr.find(qn("a:buChar")) is not None:
-            return True
+            return "char"
         if pPr.find(qn("a:buBlip")) is not None:
-            return True
+            return "blip"
         if pPr.find(qn("a:buFont")) is not None:
-            return True
+            return "font"
 
         return False
