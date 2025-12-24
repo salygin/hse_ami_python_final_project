@@ -2,10 +2,6 @@ import argparse
 import sys
 from pathlib import Path
 
-from pptlint.loader import load_presentation
-from pptlint.analyzer import PresentationAnalyzer
-from pptlint.report import print_report, write_markdown_report
-
 
 def _bootstrap_import_path() -> None:
     if __package__:
@@ -20,6 +16,10 @@ def _bootstrap_import_path() -> None:
 
 
 _bootstrap_import_path()
+
+from pptlint.loader import load_presentation
+from pptlint.analyzer import PresentationAnalyzer
+from pptlint.report import print_report, write_markdown_report
 
 def _parse_args(argv: list[str] | None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
