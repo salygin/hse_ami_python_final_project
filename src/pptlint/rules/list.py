@@ -59,6 +59,9 @@ class ListRule(Rule):
                 cnt += 1
         return cnt
 
+    def _is_list_paragraph(self, paragraph) -> bool:
+        return self._paragraph_type(paragraph) in {"auto", "char", "blip", "font"}
+
     def _has_mixed_bullets(self, text_frame) -> bool:
         types: list[str] = []
         for p in getattr(text_frame, "paragraphs", []):
@@ -95,4 +98,4 @@ class ListRule(Rule):
         if pPr.find(qn("a:buFont")) is not None:
             return "font"
 
-        return False
+        return "none"

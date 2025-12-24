@@ -87,7 +87,7 @@ class SlideNumberRule(Rule):
 
         s = raw.strip()
         if not s:
-            return False
+            return None
         
         # убираем типичные обертки номера слайда
         s = re.sub(r"^\s*(?:slide\s*)?", "", s, flags=re.IGNORECASE)
@@ -116,7 +116,7 @@ class SlideNumberRule(Rule):
             n = int(s)
             if n <= 0:
                 return None
-            if n > total_slides:
+            if total_slides is not None and n > total_slides:
                 return None
             if n > 1000:
                 return None
