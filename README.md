@@ -22,7 +22,7 @@
 Пользователь запускает скрипт в терминале:
 
 ```bash
-python pptlint.py path/to/presentation.pptx
+pptlint path/to/presentation.pptx
 ```
 
 После выполнения скрипт показывает отчёт:
@@ -48,7 +48,7 @@ python pptlint.py path/to/presentation.pptx
 Опционально (позже) можно добавить флаг:
 
 ```bash
-python pptlint.py presentation.pptx --report report.md
+pptlint presentation.pptx --report report.md
 ```
 чтобы сохранить отчёт в файл Markdown.
 
