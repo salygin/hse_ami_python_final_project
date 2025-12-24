@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pptlint"
+version = "0.1.0"
+description = "PowerPoint Lint: проверка .pptx на типовые ошибки оформления"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "python-pptx",
+]
+
+[project.scripts]
+pptlint = "pptlint.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
